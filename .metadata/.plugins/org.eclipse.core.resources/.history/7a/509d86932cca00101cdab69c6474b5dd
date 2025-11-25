@@ -1,0 +1,5 @@
+package com.example.videostream.repository;
+
+public class VideoRepository {
+
+}

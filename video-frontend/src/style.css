@@ -1,0 +1,386 @@
+/* /video-frontend/src/style.css
+   Warm coral theme (user palette)
+   Palette:
+     --bg-soft: #FCF5EE
+     --accent-1: #FFC4C4
+     --accent-2: #EE6983
+     --accent-3: #850E35
+*/
+
+/* -------- Palette & variables -------- */
+:root{
+  --bg-soft: #FCF5EE;
+  --accent-1: #FFC4C4;
+  --accent-2: #EE6983;
+  --accent-3: #850E35;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --glass: rgba(255,255,255,0.75);
+  --shadow-1: 0 6px 20px rgba(133,14,53,0.06);
+  --shadow-2: 0 12px 30px rgba(133,14,53,0.06);
+  --radius-lg: 14px;
+  --radius-sm: 8px;
+  --glass-border: rgba(238,105,131,0.10);
+
+  /* dark-mode adjustments */
+  --dark-bg-1: #120a0d;   /* main dark background (not pure black) */
+  --dark-bg-2: #170d11;   /* slightly lighter panels */
+  --dark-panel: #1b0f13;
+  --dark-text: #f7e9ea;
+  --dark-muted: rgba(255,230,233,0.75);
+  --dark-input: rgba(255,255,255,0.03);
+}
+
+/* -------- Reset & base -------- */
+* { box-sizing: border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+html,body { height:100%; }
+body{
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, var(--bg-soft) 0%, #fffaf6 60%);
+  color: #2b1f20;
+  line-height:1.45;
+  letter-spacing: 0.2px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Container */
+.container {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 0 20px;
+}
+
+/* NAVBAR */
+.nav {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding: 14px 20px;
+  margin: 18px auto 24px;
+  width: calc(100% - 40px);
+  max-width: 1200px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.92), rgba(255,250,248,0.92));
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(4px) saturate(110%);
+}
+
+.brand {
+  font-weight:800;
+  color:var(--accent-3);
+  text-decoration:none;
+  font-size:20px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* logo: use img in markup; helper class below if you need a background */
+.brand-logo-img {
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  object-fit:cover;
+  display:inline-block;
+  box-shadow: 0 6px 14px rgba(238,105,131,0.16);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+
+/* If you prefer to use CSS background image instead of <img>, this rule points to your uploaded file:
+   (we still keep it optional — markup can use <img className="brand-logo-img" /> which is preferred)
+*/
+.brand-logo-bg {
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  display:inline-block;
+  background-image: url('/mnt/data/80e5ce61-cd77-4918-a6dd-bbecb93a0e5e.png');
+  background-size:cover;
+  background-position:center;
+  box-shadow: 0 6px 14px rgba(238,105,131,0.16);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+
+/* nav right */
+.nav-right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.nav-right a, .nav-right .btn-link {
+  margin-left:6px;
+  color: #3b2a2b;
+  text-decoration:none;
+  font-weight:600;
+  padding:8px 10px;
+  border-radius:10px;
+  transition: all .18s ease;
+}
+
+.nav-right a:hover, .nav-right .btn-link:hover {
+  background: rgba(238,105,131,0.06);
+  transform: translateY(-1px);
+}
+
+.btn-link {
+  background:none;
+  border:none;
+  color:var(--accent-3);
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* page header / title */
+.page-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  margin-bottom: 18px;
+  border: 1px solid rgba(133,14,53,0.03);
+}
+
+/* Forms */
+.form {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+input, textarea, select {
+  padding:12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #f0dfe0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,249,0.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  font-size:15px;
+  color:#2b1f20;
+  outline: none;
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: rgba(238,105,131,0.6);
+  box-shadow: 0 6px 18px rgba(238,105,131,0.06);
+}
+
+textarea { min-height:110px; resize:vertical; }
+
+/* Buttons */
+.btn {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: var(--accent-3);
+  padding:11px 16px;
+  border:none;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight:700;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+  box-shadow: 0 10px 26px rgba(133,14,53,0.10);
+}
+
+.btn:hover { transform: translateY(-3px); opacity:0.98; box-shadow: 0 18px 40px rgba(133,14,53,0.12); }
+.btn.secondary {
+  background: transparent;
+  color: var(--accent-3);
+  border: 1px solid #ffecec;
+  box-shadow: none;
+}
+
+/* Utility text */
+.muted { color: var(--muted); font-size:14px; }
+h2 { margin:0 0 8px 0; font-size:20px; }
+
+/* Grid for videos */
+.grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:18px;
+}
+
+/* Video card with thumbnail + overlay controls */
+.video-card {
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));
+  color:#1f1a1a;
+  min-height:160px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.video-card .meta {
+  padding:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,250,249,0.8));
+  backdrop-filter: blur(4px);
+}
+
+.video-card h3 { margin:0 0 6px 0; font-size:16px; color:#2b1f20; }
+.video-card p.muted { color: rgba(43,31,32,0.6); margin:0; font-size:13px; }
+
+/* video element styles */
+.video {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:8px;
+  background: #000;
+  outline: none;
+}
+
+/* subtle hover lift */
+.card:hover, .video-card:hover {
+  transform: translateY(-6px);
+  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 20px 48px rgba(17,24,39,0.06);
+}
+
+/* small screens: stack nicely */
+@media (max-width:640px) {
+  .nav { padding:12px; margin:12px; border-radius:12px; }
+  .brand { font-size:18px; }
+  .grid { gap:12px; }
+  .card { padding:14px; border-radius:12px; }
+}
+
+/* helper classes for lists and spacing */
+.flex { display:flex; gap:8px; align-items:center; }
+.center { text-align:center; }
+.small { font-size:13px; color:var(--muted); }
+
+/* file input styling hack */
+.file-input {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:8px;
+  background: linear-gradient(180deg,#fff,#fff8f7);
+  border:1px dashed rgba(133,14,53,0.06);
+  cursor:pointer;
+}
+
+/* subtle footer */
+.footer {
+  margin:28px auto 80px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* -------- Dark Mode (improved contrast) --------
+   Add 'dark' class to <body> to enable
+*/
+body.dark {
+  background: linear-gradient(180deg, var(--dark-bg-1) 0%, var(--dark-bg-2) 100%);
+  color: var(--dark-text);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* navbar */
+body.dark .nav {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-color: rgba(255,255,255,0.03);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+}
+
+/* panels / cards */
+body.dark .card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-color: rgba(255,255,255,0.03);
+  color: var(--dark-text);
+}
+
+/* text colors */
+body.dark h2, body.dark p, body.dark .muted {
+  color: var(--dark-text);
+}
+body.dark .muted {
+  color: var(--dark-muted);
+}
+
+/* inputs */
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: var(--dark-input);
+  color: var(--dark-text);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: none;
+}
+body.dark input:focus,
+body.dark textarea:focus {
+  border-color: rgba(238,105,131,0.85);
+  box-shadow: 0 10px 30px rgba(238,105,131,0.08);
+}
+
+/* buttons */
+body.dark .btn {
+  background: linear-gradient(90deg, #ffd2d2, #ff9aa6); /* lighter button gradient for contrast */
+  color: #3f0812; /* deep text inside button for contrast */
+  box-shadow: 0 12px 36px rgba(133,14,53,0.18);
+}
+
+/* nav links */
+body.dark .nav-right a,
+body.dark .nav-right .btn-link {
+  color: var(--dark-text);
+}
+body.dark .nav-right a:hover,
+body.dark .nav-right .btn-link:hover {
+  background: rgba(238,105,131,0.06);
+}
+
+/* video meta overlay */
+body.dark .video-card .meta {
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
+}
+
+/* floating upload button (mobile) */
+.fab {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 26px rgba(133,14,53,0.3);
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 999;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 18px 36px rgba(133,14,53,0.45);
+}
+
+@media (min-width: 800px) {
+  .fab {
+    display: none;
+  }
+}

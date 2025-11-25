@@ -1,0 +1,5 @@
+package com.example.videostream.service;
+
+public class UserDetailsServiceImp {
+
+}

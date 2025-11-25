@@ -1,0 +1,163 @@
+package com.example.videostream.controller;
+
+import com.example.videostream.model.User;
+import com.example.videostream.model.Video;
+import com.example.videostream.repository.UserRepository;
+import com.example.videostream.repository.VideoRepository;
+import com.example.videostream.service.StorageService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/videos")
+public class VideoController {
+
+    private final VideoRepository videoRepository;
+    private final StorageService storageService;
+    private final UserRepository userRepository;
+
+    public VideoController(VideoRepository videoRepository,
+                           StorageService storageService,
+                           UserRepository userRepository) {
+        this.videoRepository = videoRepository;
+        this.storageService = storageService;
+        this.userRepository = userRepository;
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("title") String title,
+                                    @RequestParam(value = "description", required = false) String description,
+                                    @AuthenticationPrincipal UserDetails principal) throws Exception {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String stored = storageService.store(file);
+
+        Video v = new Video();
+        v.setTitle(title);
+        v.setDescription(description);
+        v.setFilename(stored);
+        v.setContentType(file.getContentType());
+        v.setSize(file.getSize());
+
+        Optional<User> uploader = userRepository.findByUsername(principal.getUsername());
+        uploader.ifPresent(v::setUploader);
+
+        videoRepository.save(v);
+
+        return ResponseEntity.ok(v);
+    }
+
+    @GetMapping
+    public List<Video> list() {
+        return videoRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMeta(@PathVariable Long id) {
+        return videoRepository.findById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMeta(@PathVariable Long id,
+                                        @RequestBody Video update,
+                                        @AuthenticationPrincipal UserDetails principal) {
+
+        Optional<Video> opt = videoRepository.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Video v = opt.get();
+
+        // ownership check
+        if (v.getUploader() != null && principal != null &&
+                !v.getUploader().getUsername().equals(principal.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        v.setTitle(update.getTitle());
+        v.setDescription(update.getDescription());
+        videoRepository.save(v);
+
+        return ResponseEntity.ok(v);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id,
+                                    @AuthenticationPrincipal UserDetails principal) {
+
+        Optional<Video> opt = videoRepository.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Video v = opt.get();
+
+        if (v.getUploader() != null && principal != null &&
+                !v.getUploader().getUsername().equals(principal.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        storageService.delete(v.getFilename());
+        videoRepository.delete(v);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // STREAMING endpoint with Range support
+    @GetMapping("/stream/{filename}")
+    public ResponseEntity<Resource> stream(@PathVariable String filename,
+                                           @RequestHeader(value = "Range", required = false) String rangeHeader)
+            throws FileNotFoundException {
+
+        long fileSize = storageService.getSize(filename);
+
+        // NORMAL (non-range) request
+        if (rangeHeader == null) {
+            Resource resource = storageService.getResource(filename);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentLength(fileSize);
+            headers.set(HttpHeaders.ACCEPT_RANGES, "bytes");
+            headers.setContentType(MediaTypeFactory.getMediaType(filename)
+                    .orElse(MediaType.APPLICATION_OCTET_STREAM));
+
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        }
+
+        // RANGE request
+        String[] parts = rangeHeader.replace("bytes=", "").split("-");
+        long start = Long.parseLong(parts[0]);
+        long end = (parts.length > 1 && !parts[1].isEmpty())
+                ? Long.parseLong(parts[1])
+                : fileSize - 1;
+
+        if (end > fileSize - 1) end = fileSize - 1;
+
+        long len = end - start + 1;
+
+        Resource region = storageService.getResourceRegion(filename, start, len);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentLength(len);
+        headers.set(
+                HttpHeaders.CONTENT_RANGE,
+                String.format("bytes %d-%d/%d", start, end, fileSize)
+        );
+        headers.set(HttpHeaders.ACCEPT_RANGES, "bytes");
+        headers.setContentType(MediaTypeFactory.getMediaType(filename)
+                .orElse(MediaType.APPLICATION_OCTET_STREAM));
+
+        return new ResponseEntity<>(region, headers, HttpStatus.PARTIAL_CONTENT);
+    }
+}
