@@ -13,7 +13,7 @@ services:
       - springboot-mysql-net
 
   backend:
-    image: shaikmandurusajida/docker-video-backend:latest
+    image: sajidashaikmanduru/docker-video-backend:latest
     container_name: springboot
     ports:
       - "4545:2222"
@@ -24,7 +24,7 @@ services:
       - springboot-mysql-net
 
   frontend:
-    image: shaikmandurusajida/docker-video-frontend:latest
+    image: sajidashaikmanduru/docker-video-frontend:latest
     container_name: react
     ports:
       - "3000:80"
