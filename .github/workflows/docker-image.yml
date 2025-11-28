@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./video-backend
-          file: ./video_backend/backend.Dockerfile
+          file: ./video-backend/backend.Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/docker-video-backend:latest
 
